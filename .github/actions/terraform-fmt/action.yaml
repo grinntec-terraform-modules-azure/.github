@@ -1,0 +1,24 @@
+name: Terraform Auto-Format & Push
+description: Automatically runs 'terraform fmt' on all .tf files in the repository root, commits and pushes changes if needed, and logs the action to the summary.
+
+inputs:
+  author_name:
+    description: "Git commit author name"
+    required: false
+    default: "github-actions[bot]"
+  author_email:
+    description: "Git commit author email"
+    required: false
+    default: "github-actions[bot]@users.noreply.github.com"
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      
+    - name: Run Terraform Fmt Script
+      shell: bash
+      run: |
+        chmod +x "${{ github.action_path }}/script.sh"
+        "${{ github.action_path }}/script.sh" "${{ inputs.author_name }}" "${{ inputs.author_email }}"

@@ -1,0 +1,65 @@
+#######################################################################################################
+# Composite Action: Terraform Documentation Generation                                               #
+#                                                                                                     #
+# Purpose:                                                                                            #
+#   - Generates comprehensive Terraform module documentation using terraform-docs                     #
+#   - Updates README.md with provider requirements, inputs, outputs, and resources                    #
+#   - Uses configurable templates and formatting options                                             #
+#                                                                                                     #
+# How it works:                                                                                       #
+#   - Installs terraform-docs CLI tool                                                                #
+#   - Reads configuration from tf-docs.yaml                                                          #
+#   - Generates documentation and updates README.md                                                   #
+#   - Provides summary of changes made                                                               #
+#                                                                                                     #
+# Best Practices:                                                                                     #
+#   - Use .tf-docs.yaml for consistent formatting across modules                                      #
+#   - Include provider requirements, inputs, outputs, and resource documentation                      #
+#   - Generate documentation as part of CI/CD pipeline                                               #
+#######################################################################################################
+
+name: Terraform Documentation
+description: Generate comprehensive Terraform module documentation using terraform-docs
+
+inputs:
+  config_file:
+    description: Path to terraform-docs configuration file
+    required: false
+    default: ./.tf-docs.yaml
+  output_file:
+    description: Output file for generated documentation
+    required: false
+    default: README.md
+  working_directory:
+    description: Working directory to run terraform-docs in
+    required: false
+    default: .
+
+runs:
+  using: composite
+  steps:
+    # Step 1: Install terraform-docs
+    - name: Install terraform-docs
+      shell: bash
+      run: |
+        set -e
+        TFDOCS_VERSION="v0.19.0"
+        PLATFORM="linux-amd64"
+        BINARY="terraform-docs-${TFDOCS_VERSION}-${PLATFORM}.tar.gz"
+        
+        echo "[DEBUG] Installing terraform-docs ${TFDOCS_VERSION}"
+        curl -sLO "https://github.com/terraform-docs/terraform-docs/releases/download/${TFDOCS_VERSION}/${BINARY}"
+        tar -xzf "${BINARY}"
+        chmod +x terraform-docs
+        mkdir -p "$HOME/.local/bin"
+        mv terraform-docs "$HOME/.local/bin/"
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        
+        echo "[DEBUG] terraform-docs installed successfully"
+
+    # Step 2: Run terraform-docs to generate documentation
+    - name: Generate Documentation
+      shell: bash
+      run: |
+        chmod +x "${{ github.action_path }}/script.sh"
+        "${{ github.action_path }}/script.sh" "${{ inputs.config_file }}" "${{ inputs.output_file }}" "${{ inputs.working_directory }}"

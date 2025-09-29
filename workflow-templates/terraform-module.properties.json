@@ -1,0 +1,10 @@
+{
+  "name": "Terraform Module Governance",
+  "description": "Complete CI/CD pipeline for Terraform modules including formatting, validation, linting, security scanning, and documentation generation.",
+  "iconName": "terraform",
+  "categories": [
+    "ci",
+    "terraform",
+    "infrastructure"
+  ]
+}

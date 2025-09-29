@@ -1,0 +1,61 @@
+name: Terraform Security Scan
+description: Runs Checkov on Terraform files for security best-practices and compliance checks.
+
+runs:
+  using: composite
+  steps:
+  
+  - name: Cache pip packages
+    uses: actions/cache@v4
+    with:
+      path: ~/.cache/pip
+      key: ${{ runner.os }}-pip-${{ hashFiles('${{ github.action_path }}/requirements.txt') }}
+      restore-keys: |
+        ${{ runner.os }}-pip-
+  
+  - name: Cache Checkov database and rules
+    uses: actions/cache@v4
+    with:
+      path: |
+        ~/.checkov
+        ~/.cache/checkov
+      key: ${{ runner.os }}-checkov-db-${{ hashFiles('${{ github.action_path }}/requirements.txt') }}-${{ github.run_number }}
+      restore-keys: |
+        ${{ runner.os }}-checkov-db-${{ hashFiles('${{ github.action_path }}/requirements.txt') }}-
+        ${{ runner.os }}-checkov-db-
+  
+  - name: Cache Python virtual environment
+    uses: actions/cache@v4
+    id: venv-cache
+    with:
+      path: |
+        ~/.local/lib/python*/site-packages
+        ~/.local/bin
+      key: ${{ runner.os }}-python-venv-${{ hashFiles('${{ github.action_path }}/requirements.txt') }}
+      restore-keys: |
+        ${{ runner.os }}-python-venv-
+  
+  - name: Install Checkov from requirements
+    shell: bash
+    run: |
+      # Add Python user bin to PATH
+      echo "$HOME/.local/bin" >> $GITHUB_PATH
+      export PATH="$HOME/.local/bin:$PATH"
+      
+      # Only install if cache miss or requirements changed
+      if [[ "${{ steps.venv-cache.outputs.cache-hit }}" != "true" ]]; then
+        echo "Cache miss - installing Checkov..."
+        pip install --user -r ${{ github.action_path }}/requirements.txt
+      else
+        echo "Cache hit - skipping Checkov installation"
+      fi
+      
+      # Verify installation
+      which checkov || echo "Checkov not found in PATH"
+      checkov --version || echo "Checkov version check failed"
+  
+  - name: Run Checkov scan script
+    shell: bash
+    run: |
+      chmod +x "${{ github.action_path }}/script.sh"
+      "${{ github.action_path }}/script.sh"

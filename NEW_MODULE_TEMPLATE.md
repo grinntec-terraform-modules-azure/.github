@@ -1,6 +1,8 @@
 # New Terraform Module Template Files
 
 ## 1. .github/workflows/governance.yml
+
+```yml
 name: Terraform Module Governance
 
 on:
@@ -71,8 +73,11 @@ jobs:
             echo "✅ No changes to commit"
           fi
         shell: bash
+```
 
 ## 2. .tflint.hcl
+
+```yaml
 plugin "terraform" {
   enabled = true
   preset  = "recommended"
@@ -136,8 +141,12 @@ rule "terraform_unused_declarations" {
 rule "terraform_unused_required_providers" {
   enabled = true
 }
+```yaml
+
 
 ## 3. .gitignore
+
+```
 # Python
 __pycache__/
 *.py[cod]
@@ -205,8 +214,11 @@ workflow_log.txt
 
 # License files from downloads
 LICENSE.txt
+```
 
 ## 4. tf-management/tf-docs/tf-docs.yaml
+
+```
 formatter: "markdown table"
 
 header-from: main.tf
@@ -282,8 +294,11 @@ settings:
   required: true
   sensitive: true
   type: true
+```
 
 ## 5. versions.tf
+
+```
 terraform {
   required_version = ">= 1.5"
 
@@ -315,8 +330,11 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+```
 
 ## 7. outputs.tf Template
+
+```
 output "id" {
   description = "The ID of the created resource"
   value       = azurerm_resource_group.this.id
@@ -331,8 +349,11 @@ output "location" {
   description = "The location of the created resource"
   value       = azurerm_resource_group.this.location
 }
+```
 
 ## 8. example/main.tf Template
+
+```hcl
 terraform {
   required_version = ">= 1.5"
 
@@ -355,8 +376,11 @@ module "example" {
   location = var.location
   tags     = var.tags
 }
+```
 
 ## 9. example/variables.tf Template
+
+```hcl
 variable "name" {
   description = "The name of the resource"
   type        = string
@@ -377,8 +401,11 @@ variable "tags" {
     Purpose     = "example"
   }
 }
+```
 
 ## 10. example/terraform.tfvars Template
+
+```hcl
 name     = "my-example-resource"
 location = "East US"
 
@@ -387,3 +414,4 @@ tags = {
   Purpose     = "testing"
   Owner       = "platform-team"
 }
+```

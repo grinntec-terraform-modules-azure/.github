@@ -2,7 +2,7 @@
 
 ## 1. .github/workflows/governance.yml
 
-```yml
+```
 name: Terraform Module Governance
 
 on:
@@ -77,7 +77,7 @@ jobs:
 
 ## 2. .tflint.hcl
 
-```yaml
+```
 plugin "terraform" {
   enabled = true
   preset  = "recommended"
@@ -141,7 +141,7 @@ rule "terraform_unused_declarations" {
 rule "terraform_unused_required_providers" {
   enabled = true
 }
-```yaml
+```
 
 
 ## 3. .gitignore

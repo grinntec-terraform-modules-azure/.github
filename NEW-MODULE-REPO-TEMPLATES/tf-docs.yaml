@@ -1,0 +1,75 @@
+formatter: "markdown table"
+
+header-from: main.tf
+footer-from: ""
+
+recursive:
+  enabled: false
+
+sections:
+  hide: []
+  show: []
+
+content: |-
+  # {{ .Header }}
+
+  {{ .Description }}
+
+  ## Usage
+
+  ```hcl
+  {{ include "example/main.tf" }}
+  ```
+
+  ## Examples
+
+  - [**Basic Usage**](./example/) - Simple implementation example
+
+  {{ .Requirements }}
+
+  {{ .Providers }}
+
+  {{ .Modules }}
+
+  {{ .Resources }}
+
+  {{ .Inputs }}
+
+  {{ .Outputs }}
+
+  ## Contributing
+
+  Please read our [organization contributing guidelines](https://github.com/grinntec-terraform-modules-azure/.github#contributing) for details on our code of conduct and the process for submitting pull requests.
+
+  ## License
+
+  This module is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+  {{ .Footer }}
+
+output:
+  file: "README.md"
+  mode: replace
+  template: |-
+    <!-- This file is auto-generated. Please do not edit manually. -->
+    <!-- Run terraform-docs to regenerate this file. -->
+    {{ .Content }}
+
+sort:
+  enabled: true
+  by: name
+
+settings:
+  anchor: true
+  color: true
+  default: true
+  description: false
+  escape: true
+  hide-empty: false
+  html: true
+  indent: 2
+  lockfile: true
+  read-comments: true
+  required: true
+  sensitive: true
+  type: true

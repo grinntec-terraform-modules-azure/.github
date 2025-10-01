@@ -14,45 +14,54 @@
    - ✅ Add .gitignore (choose "Terraform")
    - ✅ Choose a license (MIT recommended)
 
-### **Step 2: Clone and Setup Local Environment**
+### **Step 2: Use Template Repository (Recommended)**
 
+**Option A: GitHub Template (Easiest)**
+1. **Go to Template Repository**: https://github.com/grinntec-terraform-modules-azure/NEW_MODULE_REPO
+2. **Click "Use this template"** → "Create a new repository"
+3. **Name**: `terraform-azurerm-{service}`
+4. **Clone your new repository**:
+   ```bash
+   git clone https://github.com/grinntec-terraform-modules-azure/terraform-azurerm-{service}.git
+   cd terraform-azurerm-{service}
+   ```
+
+**Option B: Manual Clone and Setup**
 ```bash
-# Clone the repository
-git clone https://github.com/grinntec-terraform-modules-azure/terraform-azurerm-{service}.git
+# Clone the template repository
+git clone https://github.com/grinntec-terraform-modules-azure/NEW_MODULE_REPO.git terraform-azurerm-{service}
 cd terraform-azurerm-{service}
 
-# Create directory structure
-mkdir -p .github/workflows
-mkdir -p example
-mkdir -p tf-management/tf-docs
-mkdir -p tf-management/tf-lint/results
-mkdir -p tf-management/checkov/module
+# Update remote origin
+git remote set-url origin https://github.com/grinntec-terraform-modules-azure/terraform-azurerm-{service}.git
+
+# Create initial commit
+git add .
+git commit -m "feat: initial module from template"
+git push -u origin main
 ```
 
-### **Step 3: Copy Template Files**
+### **Step 3: Customize for Your Service (Template Already Applied)**
 
-Copy all the template files from `NEW_MODULE_TEMPLATE.md` into your new repository:
-
-1. **`.github/workflows/governance.yml`** - Centralized workflow
-2. **`.tflint.hcl`** - TFLint configuration
-3. **`.gitignore`** - Enhanced with tool exclusions
-4. **`tf-management/tf-docs/tf-docs.yaml`** - Documentation config
-5. **`versions.tf`** - Terraform version constraints
-6. **`variables.tf`** - Input variables template
-7. **`outputs.tf`** - Output values template
-8. **`example/main.tf`** - Example implementation
-9. **`example/variables.tf`** - Example variables
-10. **`example/terraform.tfvars`** - Example values
-
-### **Step 4: Customize for Your Service**
+Since you used the template repository, all essential files are already in place! Now just customize:
 
 1. **Update `main.tf`** with your Azure resource logic
-2. **Customize `variables.tf`** for your service requirements
+2. **Customize `variables.tf`** for your service requirements  
 3. **Define `outputs.tf`** for your service outputs
 4. **Update example files** with realistic usage
 5. **Test the example** to ensure it works
 
-### **Step 5: Initialize and Test**
+**Files already provided by template:**
+- ✅ **`.github/workflows/governance.yml`** - Centralized workflow
+- ✅ **`.tflint.hcl`** - TFLint configuration  
+- ✅ **`.gitignore`** - Enhanced with tool exclusions
+- ✅ **`tf-management/tf-docs/tf-docs.yaml`** - Documentation config
+- ✅ **`versions.tf`** - Comprehensive provider documentation
+- ✅ **`variables.tf`** - Input variables template
+- ✅ **`outputs.tf`** - Output values template
+- ✅ **`example/`** - Complete example implementation
+
+### **Step 4: Initialize and Test**
 
 ```bash
 # Initialize Terraform
@@ -71,25 +80,25 @@ terraform plan
 cd ..
 ```
 
-### **Step 6: Commit and Push**
+### **Step 5: Commit and Push**
 
 ```bash
 # Add all files
 git add .
 
 # Commit initial structure
-git commit -m "feat: initial module structure
+git commit -m "feat: customize module for {service}
 
-- Add centralized governance workflow
-- Configure TFLint and terraform-docs
-- Include working example implementation
-- Set up proper .gitignore exclusions"
+- Implement main.tf for {service} resource
+- Configure variables and outputs for service
+- Update example with realistic usage
+- Ready for testing and deployment"
 
 # Push to GitHub
 git push origin main
 ```
 
-### **Step 7: Verify Workflow**
+### **Step 6: Verify Workflow**
 
 1. **Check GitHub Actions**: Go to repository → Actions tab
 2. **Verify workflow runs**: Should trigger automatically

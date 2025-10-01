@@ -296,9 +296,46 @@ settings:
   type: true
 ```
 
-## 5. versions.tf
+## 5. providers.tf (or versions.tf)
 
 ```
+# =============================================================================
+# TERRAFORM PROVIDERS CONFIGURATION
+# =============================================================================
+#
+# This file defines the required Terraform and provider versions for this
+# Azure Terraform module. It ensures consistent behavior across all 
+# environments and team members.
+#
+# PURPOSE:
+# --------
+# - Specifies minimum Terraform version required for compatibility
+# - Defines Azure Resource Manager (AzureRM) provider for Azure resources
+# - Includes additional providers as needed for module functionality
+# - Establishes version constraints for reproducible deployments
+#
+# HOW IT WORKS:
+# -------------
+# 1. Terraform Version: Ensures compatibility with modern Terraform features
+# 2. AzureRM Provider: Manages Azure resources and services
+# 3. Additional Providers: Include other providers as needed (random, time, etc.)
+# 4. Version Constraints: Uses semantic versioning to prevent breaking changes
+#
+# VERSION STRATEGY:
+# -----------------
+# - Terraform: ">= 1.5" - Minimum version for stability and features
+# - AzureRM: "~> 3.0" - Major version 3.x with latest minor/patch updates
+# - Other Providers: Pinned or constrained versions as appropriate
+#
+# NOTES:
+# ------
+# - This file is automatically validated by our CI/CD pipeline
+# - Version updates should be tested in development environments first
+# - The .terraform.lock.hcl file pins exact versions after 'terraform init'
+# - Update provider versions carefully to avoid breaking changes
+#
+# =============================================================================
+
 terraform {
   required_version = ">= 1.5"
 
@@ -307,10 +344,18 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 3.0"
     }
+    # Add additional providers as needed for your module
+    # random = {
+    #   source  = "hashicorp/random"
+    #   version = "~> 3.0"
+    # }
   }
 }
+```
 
 ## 6. variables.tf Template
+
+```
 variable "name" {
   description = "The name of the resource"
   type        = string

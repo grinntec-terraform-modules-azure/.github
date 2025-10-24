@@ -22,6 +22,11 @@ sections:                       # Specify at a granular level what sections to h
   show: []
 
 content: |-
+
+  {{ .Header }}
+
+  ---
+  
   {{ .Module }}
 
   {{ range .Module.Resources }}

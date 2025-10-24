@@ -12,7 +12,7 @@ set -euo pipefail
 CONFIG_FILE="${1:-./tf-management/tf-docs/tf-docs.yaml}"
 OUTPUT_FILE="${2:-README.md}"
 WORKING_DIR="${3:-.}"
-USE_CENTRAL_CONFIG="${4:-false}"
+USE_CENTRAL_CONFIG="${4:-true}"
 
 # Get repo root and work from there
 REPO_ROOT="$(git rev-parse --show-toplevel)"

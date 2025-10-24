@@ -23,10 +23,10 @@ sections:                       # Specify at a granular level what sections to h
   hide-all: false
   show-all: true
 
-content: |-                     # Customize the outputted file content             
-  # 🏗️ {{ .Module.Path | title | replace "-" " " | replace "_" " " }}
+content: |-
+  # 🏗️ Terraform Azure Module
 
-  > **Terraform Module for Azure Infrastructure**  
+  > **Enterprise Terraform Module for Azure Infrastructure**
   > Part of the [grinntec-terraform-modules-azure](https://github.com/grinntec-terraform-modules-azure) collection
 
   ## 📋 Overview
@@ -49,8 +49,8 @@ content: |-                     # Customize the outputted file content
   ## 🚀 Quick Start
 
   ```hcl
-  module "{{ .Module.Path | replace "terraform-azurerm-" "" }}" {
-    source = "git::https://github.com/grinntec-terraform-modules-azure/{{ .Module.Path }}.git?ref=v1.0.0"
+  module "azure_resource" {
+    source = "git::https://github.com/grinntec-terraform-modules-azure/[MODULE-NAME].git?ref=v1.0.0"
     
     # Required variables - see Variables section below
     name     = "your-resource-name"
@@ -92,8 +92,8 @@ content: |-                     # Customize the outputted file content
   ### Local Development
   ```bash
   # Clone the repository
-  git clone https://github.com/grinntec-terraform-modules-azure/{{ .Module.Path }}.git
-  cd {{ .Module.Path }}
+  git clone https://github.com/grinntec-terraform-modules-azure/[MODULE-NAME].git
+  cd [MODULE-NAME]
 
   # Initialize Terraform
   terraform init
@@ -144,14 +144,14 @@ content: |-                     # Customize the outputted file content
   ## 📞 Support & Contributing
 
   - 📚 **Documentation**: [Terraform Module Standards](https://github.com/grinntec-terraform-modules-azure/.github)
-  - 🐛 **Issues**: [Report Issues](https://github.com/grinntec-terraform-modules-azure/{{ .Module.Path }}/issues)
-  - 💡 **Discussions**: [Community Discussions](https://github.com/grinntec-terraform-modules-azure/{{ .Module.Path }}/discussions)
+  - 🐛 **Issues**: Report issues in this repository's issue tracker
+  - 💡 **Discussions**: Use GitHub Discussions for questions and ideas
   - 🤝 **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md)
 
   ### Module Versioning
   This module uses [Semantic Versioning](https://semver.org/). Always pin to a specific version in production:
   ```hcl
-  source = "git::https://github.com/grinntec-terraform-modules-azure/{{ .Module.Path }}.git?ref=v1.0.0"
+  source = "git::https://github.com/grinntec-terraform-modules-azure/[MODULE-NAME].git?ref=v1.0.0"
   ```
   
   {{ .Footer }}

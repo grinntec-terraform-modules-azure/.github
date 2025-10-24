@@ -20,10 +20,14 @@ recursive:                      # Documentation for main module and its submodul
 sections:                       # Specify at a granular level what sections to hide/show
   hide: []
   show: []
-  hide-all: false
-  show-all: true
 
 content: |-
+  {{ .Module }}
+
+  {{ range .Module.Resources }}
+  - {{ .GetMode }}.{{ .Spec }} ({{ .Position.Filename }}#{{ .Position.Line }})
+  {{- end }}  
+  
   # Terraform Azure Module
 
   > **Enterprise Terraform Module for Azure Infrastructure**
@@ -56,6 +60,8 @@ content: |-
   {{ .Inputs }}
   {{ .Outputs }}
   
+  ---
+
   ## 💡 Usage Examples
 
   ### Production Deployment Example
@@ -63,6 +69,7 @@ content: |-
   ```hcl
   {{ include "example/main-production.tf" }}
   ```
+
   ---
    
   ## 🔍 Quality Assurance
@@ -94,6 +101,11 @@ content: |-
   This module uses [Semantic Versioning](https://semver.org/). Always pin to a specific version in production:
   ```hcl
   source = "git::https://github.com/grinntec-terraform-modules-azure/[MODULE-NAME].git?ref=v1.0.0"
+
+  ---
+
+  > This file was created using [terraform-docs](https://terraform-docs.io/)
+
   ```
   
   {{ .Footer }}

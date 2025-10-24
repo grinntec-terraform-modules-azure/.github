@@ -1,0 +1,70 @@
+##########################################################################
+# Simplified Terraform Documentation Action                             #
+# ==================================================================== #
+# Purpose: Generate documentation using centralized configuration       #
+# Config:  Always uses .github/.terraform-docs.yml                      #
+# Simple:  No options, no complexity, just works                        #
+##########################################################################
+
+name: 📚 Terraform Documentation (Centralized)
+description: Generate Terraform module documentation using central configuration
+
+inputs:
+  working_directory:
+    description: Working directory to run terraform-docs in
+    required: false
+    default: .
+
+runs:
+  using: composite
+  steps:
+    # Install terraform-docs
+    - name: 📥 Install terraform-docs
+      shell: bash
+      run: |
+        set -e
+        TFDOCS_VERSION="v0.19.0"
+        PLATFORM="linux-amd64"
+        BINARY="terraform-docs-${TFDOCS_VERSION}-${PLATFORM}.tar.gz"
+        
+        echo "📥 Installing terraform-docs ${TFDOCS_VERSION}"
+        curl -sLO "https://github.com/terraform-docs/terraform-docs/releases/download/${TFDOCS_VERSION}/${BINARY}"
+        tar -xzf "${BINARY}"
+        chmod +x terraform-docs
+        mkdir -p "$HOME/.local/bin"
+        mv terraform-docs "$HOME/.local/bin/"
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    # Generate documentation using central config
+    - name: 📚 Generate Documentation
+      shell: bash
+      run: |
+        set -e
+        
+        # Always use the central configuration
+        CENTRAL_CONFIG_URL="https://raw.githubusercontent.com/grinntec-terraform-modules-azure/.github/main/.terraform-docs.yml"
+        WORKING_DIR="${{ inputs.working_directory }}"
+        
+        echo "📋 Using central configuration from: $CENTRAL_CONFIG_URL"
+        echo "📁 Working directory: $WORKING_DIR"
+        
+        # Download central config
+        curl -sL "$CENTRAL_CONFIG_URL" -o ".terraform-docs.yml"
+        
+        # Check for .tf files
+        tf_files_count=$(find "$WORKING_DIR" -maxdepth 1 -name "*.tf" | wc -l)
+        if [[ "$tf_files_count" -eq 0 ]]; then
+          echo "::notice::No .tf files found in directory: $WORKING_DIR"
+          exit 0
+        fi
+        
+        echo "📊 Found $tf_files_count .tf files"
+        
+        # Generate documentation
+        echo "🚀 Generating documentation..."
+        terraform-docs --config .terraform-docs.yml "$WORKING_DIR"
+        
+        # Clean up
+        rm -f .terraform-docs.yml
+        
+        echo "✅ Documentation generated successfully!"

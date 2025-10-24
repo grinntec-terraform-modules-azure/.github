@@ -1,0 +1,89 @@
+##################################################################
+# Standardized Terraform-Docs Configuration                     #
+# ============================================================== #
+# Organization: grinntec-terraform-modules-azure                #
+# Purpose: Central configuration for all Terraform modules      #
+# Version: 1.0                                                  #
+##################################################################
+
+formatter: "markdown table"     # Format as Markdown document
+
+version: ""
+
+header-from: main.tf
+footer-from: ""
+
+recursive:                      # Documentation for main module and its submodules can be generated all in one execution
+  enabled: false
+  path: ""                      # Path to find submodules
+
+sections:                       # Specify at a granular level what sections to hide/show
+  hide: []
+  show: []
+  hide-all: false
+  show-all: true
+
+content: |-                     # Customize the outputted file content             
+  standard Terraform-Docs Configuration
+
+  {{ .Header }}
+  
+  {{ .Resources }}
+  {{ .Requirements }}
+  {{ .Providers }}
+  {{ .Inputs }}
+  {{ .Outputs }}
+  
+  # Deployment Module Example
+  - This example deployment module uses this global configuration module.
+  - It is located in the ./example directory.
+
+  ```hcl
+  {{ include "example/main-production.tf" }}
+  ```
+  ---
+   
+  # TFLint Results
+  The results of the most recent TFLint. If there is no data, then there are no issues logged.
+
+  ```hcl
+  {{ include "tf-management/tf-lint/results/tf-lint-results-module.txt" }}
+  ```
+  
+  ---
+
+  # Checkov Security Scan Results
+  The results of the most recent Checkov security scan. If there is no data, then there are no issues logged.
+ 
+  ```hcl
+  {{ include "tf-management/checkov/module/results_cli.txt" }}
+  ```
+  
+  {{ .Footer }}
+
+output:
+  file: "README.md"
+  mode: replace
+  template: |-
+    <!-- BEGIN_TF_DOCS -->
+    {{ .Content }}
+    <!-- END_TF_DOCS -->
+
+sort:
+  enabled: true
+  by: name
+
+settings:
+  anchor: true
+  color: true
+  default: true
+  description: false
+  escape: true
+  hide-empty: false
+  html: true
+  indent: 2
+  lockfile: true
+  read-comments: true
+  required: true
+  sensitive: true
+  type: true

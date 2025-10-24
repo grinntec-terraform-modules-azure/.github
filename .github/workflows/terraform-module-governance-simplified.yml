@@ -1,0 +1,66 @@
+name: 🏗️ Terraform Module Governance
+
+# Centralized reusable workflow for all Terraform module repositories
+# Uses standardized configuration from .github/.terraform-docs.yml
+on:
+  workflow_call:
+    inputs:
+      terraform_version:
+        description: 'Terraform version to use'
+        required: false
+        type: string
+        default: 'latest'
+      working_directory:
+        description: 'Working directory for Terraform files'
+        required: false
+        type: string
+        default: '.'
+
+jobs:
+  terraform-governance:
+    name: 📋 Terraform Module Governance
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+           
+      - name: 💾 Cache Terraform Providers
+        uses: grinntec-terraform-modules-azure/.github/.github/actions/cache-terraform-providers@main
+
+      - name: ⚙️ Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ inputs.terraform_version }}
+    
+      - name: 🎨 Terraform Format
+        uses: grinntec-terraform-modules-azure/.github/.github/actions/terraform-fmt@main
+
+      - name: ✅ Terraform Validate
+        uses: grinntec-terraform-modules-azure/.github/.github/actions/terraform-validate@main
+
+      - name: 🔍 TF Lint
+        uses: grinntec-terraform-modules-azure/.github/.github/actions/tf-lint@main
+
+      - name: 🔒 Terraform Security Scan
+        uses: grinntec-terraform-modules-azure/.github/.github/actions/terraform-security-scan@main
+
+      - name: 📚 Terraform Documentation
+        uses: grinntec-terraform-modules-azure/.github/.github/actions/terraform-docs-simple@main
+        with:
+          working_directory: ${{ inputs.working_directory }}
+
+      - name: 💾 Commit Documentation Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: auto-update documentation via terraform-docs 📚"
+          file_pattern: "README.md tf-management/tf-lint/results/tf-lint-results-module.txt tf-management/checkov/module/results_cli.txt"
+          commit_options: '--no-verify'
+          skip_dirty_check: false

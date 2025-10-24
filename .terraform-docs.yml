@@ -24,39 +24,134 @@ sections:                       # Specify at a granular level what sections to h
   show-all: true
 
 content: |-                     # Customize the outputted file content             
-  SIMPLE!!!!! VERY
+  # 🏗️ {{ .Module.Path | title | replace "-" " " | replace "_" " " }}
+
+  > **Terraform Module for Azure Infrastructure**  
+  > Part of the [grinntec-terraform-modules-azure](https://github.com/grinntec-terraform-modules-azure) collection
+
+  ## 📋 Overview
+
+  This Terraform module provides a standardized, production-ready implementation following infrastructure as code best practices. Each module in our collection is designed for consistency, security, and maintainability across enterprise Azure deployments.
+
+  ## 📁 Repository Structure
+
+  | File/Directory | Purpose | Description |
+  |---------------|---------|-------------|
+  | **main.tf** | 🏗️ Core Resources | Primary resource definitions and module logic |
+  | **variables.tf** | 📝 Input Interface | Variable declarations with validation and documentation |
+  | **outputs.tf** | 📤 Output Interface | Module outputs for downstream consumption |
+  | **locals.tf** | ⚙️ Local Values | Computed values and naming conventions |
+  | **data.tf** | 📊 Data Sources | External data lookups and references |
+  | **versions.tf** | 🔒 Version Control | Terraform and provider version constraints |
+  | **example/** | 💡 Usage Examples | Working examples demonstrating module usage |
+  | **tf-management/** | 🔧 Quality Tools | Automated testing, linting, and documentation |
+
+  ## 🚀 Quick Start
+
+  ```hcl
+  module "{{ .Module.Path | replace "terraform-azurerm-" "" }}" {
+    source = "git::https://github.com/grinntec-terraform-modules-azure/{{ .Module.Path }}.git?ref=v1.0.0"
+    
+    # Required variables - see Variables section below
+    name     = "your-resource-name"
+    location = "eastus"
+    
+    # Optional variables with defaults - see full list below
+    tags = {
+      Environment = "production"
+      Owner      = "platform-team"
+    }
+  }
+  ```
 
   {{ .Header }}
   
+  ## 📊 Module Documentation
+
   {{ .Resources }}
   {{ .Requirements }}
   {{ .Providers }}
   {{ .Inputs }}
   {{ .Outputs }}
   
-  # Deployment Module Example
-  - This example deployment module uses this global configuration module.
-  - It is located in the ./example directory.
+  ## 💡 Usage Examples
 
+  ### Production Deployment Example
+  
   ```hcl
   {{ include "example/main-production.tf" }}
   ```
+
+  ## 🔧 Development & Testing
+
+  ### Prerequisites
+  - Terraform >= 1.5.0
+  - Azure CLI or service principal authentication
+  - Appropriate Azure subscription permissions
+
+  ### Local Development
+  ```bash
+  # Clone the repository
+  git clone https://github.com/grinntec-terraform-modules-azure/{{ .Module.Path }}.git
+  cd {{ .Module.Path }}
+
+  # Initialize Terraform
+  terraform init
+
+  # Plan deployment
+  terraform plan -var-file="example/terraform.tfvars"
+
+  # Apply changes
+  terraform apply
+  ```
+
+  ## 🏢 Enterprise Features
+
+  ✅ **Standardized Naming**: Consistent resource naming conventions  
+  ✅ **Tag Management**: Comprehensive tagging strategy support  
+  ✅ **Security Baseline**: Built-in security best practices  
+  ✅ **Monitoring Ready**: Azure Monitor and alerting integration  
+  ✅ **Multi-Environment**: Supports dev, staging, and production  
+  ✅ **Documentation**: Auto-generated and maintained docs  
+
+  ## 🛡️ Security & Compliance
+
+  This module follows security best practices and includes:
+  - Encrypted storage where applicable
+  - Network security group rules
+  - Azure Policy compliance
+  - Role-based access control (RBAC)
+  - Audit logging enabled
+
   ---
    
-  # TFLint Results
-  The results of the most recent TFLint. If there is no data, then there are no issues logged.
+  ## 🔍 Quality Assurance
 
-  ```hcl
+  ### TFLint Results
+  
+  ```text
   {{ include "tf-management/tf-lint/results/tf-lint-results-module.txt" }}
   ```
   
+  ### Security Scan Results (Checkov)
+ 
+  ```text
+  {{ include "tf-management/checkov/module/results_cli.txt" }}
+  ```
+
   ---
 
-  # Checkov Security Scan Results
-  The results of the most recent Checkov security scan. If there is no data, then there are no issues logged.
- 
+  ## 📞 Support & Contributing
+
+  - 📚 **Documentation**: [Terraform Module Standards](https://github.com/grinntec-terraform-modules-azure/.github)
+  - 🐛 **Issues**: [Report Issues](https://github.com/grinntec-terraform-modules-azure/{{ .Module.Path }}/issues)
+  - 💡 **Discussions**: [Community Discussions](https://github.com/grinntec-terraform-modules-azure/{{ .Module.Path }}/discussions)
+  - 🤝 **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+  ### Module Versioning
+  This module uses [Semantic Versioning](https://semver.org/). Always pin to a specific version in production:
   ```hcl
-  {{ include "tf-management/checkov/module/results_cli.txt" }}
+  source = "git::https://github.com/grinntec-terraform-modules-azure/{{ .Module.Path }}.git?ref=v1.0.0"
   ```
   
   {{ .Footer }}

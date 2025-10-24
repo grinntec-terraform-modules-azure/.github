@@ -23,9 +23,13 @@ description: Generate comprehensive Terraform module documentation using terrafo
 
 inputs:
   config_file:
-    description: Path to terraform-docs configuration file
+    description: Path to terraform-docs configuration file (local path or URL)
     required: false
-    default: ./.tf-docs.yaml
+    default: ./tf-management/tf-docs/tf-docs.yaml
+  central_config:
+    description: Use central configuration from .github repository
+    required: false
+    default: 'false'
   output_file:
     description: Output file for generated documentation
     required: false
@@ -62,4 +66,4 @@ runs:
       shell: bash
       run: |
         chmod +x "${{ github.action_path }}/script.sh"
-        "${{ github.action_path }}/script.sh" "${{ inputs.config_file }}" "${{ inputs.output_file }}" "${{ inputs.working_directory }}"
+        "${{ github.action_path }}/script.sh" "${{ inputs.config_file }}" "${{ inputs.output_file }}" "${{ inputs.working_directory }}" "${{ inputs.central_config }}"

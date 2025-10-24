@@ -9,13 +9,40 @@ set -euo pipefail
 # Script: terraform-docs/script.sh
 # Purpose: Generate Terraform module documentation using terraform-docs
 
-CONFIG_FILE="${1:-./.tf-docs.yaml}"
+CONFIG_FILE="${1:-./tf-management/tf-docs/tf-docs.yaml}"
 OUTPUT_FILE="${2:-README.md}"
 WORKING_DIR="${3:-.}"
+USE_CENTRAL_CONFIG="${4:-false}"
 
 # Get repo root and work from there
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
+
+# If central config is requested, use the central configuration
+if [[ "$USE_CENTRAL_CONFIG" == "true" ]]; then
+    CENTRAL_CONFIG_URL="https://raw.githubusercontent.com/grinntec-terraform-modules-azure/.github/main/terraform-configs/tf-docs-standard.yaml"
+    echo "[DEBUG] Using central configuration from: $CENTRAL_CONFIG_URL"
+    
+    # Download central config
+    if curl -sL "$CENTRAL_CONFIG_URL" -o ".tf-docs-central.yaml" 2>/dev/null; then
+        CONFIG_FILE=".tf-docs-central.yaml"
+        echo "[DEBUG] Central configuration downloaded successfully"
+    else
+        echo "::warning::Failed to download central config, falling back to local config"
+    fi
+fi
+
+# Handle remote config URLs
+if [[ "$CONFIG_FILE" =~ ^https?:// ]]; then
+    echo "[DEBUG] Downloading remote config file from: $CONFIG_FILE"
+    if curl -sL "$CONFIG_FILE" -o ".tf-docs-remote.yaml" 2>/dev/null; then
+        CONFIG_FILE=".tf-docs-remote.yaml"
+        echo "[DEBUG] Remote configuration downloaded successfully"
+    else
+        echo "::error::Failed to download remote config file: $CONFIG_FILE"
+        exit 1
+    fi
+fi
 
 echo "[DEBUG] Running terraform-docs in directory: $(pwd)"
 echo "[DEBUG] Config file: $CONFIG_FILE"
@@ -131,6 +158,9 @@ EOF
 
 # --- Write summary to GitHub Actions UI ---
 echo "$summary" >> "$GITHUB_STEP_SUMMARY"
+
+# --- Clean up temporary config files ---
+rm -f ".tf-docs-central.yaml" ".tf-docs-remote.yaml"
 
 # --- Exit with terraform-docs exit code ---
 if [[ $terraform_docs_exit -ne 0 ]]; then

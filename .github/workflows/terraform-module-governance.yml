@@ -31,10 +31,15 @@ on:
         type: boolean
         default: true
       tf_docs_config:
-        description: 'Path to terraform-docs config file'
+        description: 'Path to terraform-docs config file (local path or URL)'
         required: false
         type: string
         default: './tf-management/tf-docs/tf-docs.yaml'
+      use_central_config:
+        description: 'Use centralized configuration from .github repository'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   terraform-governance:

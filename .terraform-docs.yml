@@ -22,7 +22,8 @@ sections:                       # Specify at a granular level what sections to h
   show: []
 
 content: |-
-  # 🏗️ {{ if .Module.Resources }}{{ with index .Module.Resources 0 }}{{ .Type | title | replace "_" " " }}{{ end }} Module{{ else }}Terraform Azure Module{{ end }}
+  {{ if .Module.Resources }}{{ with index .Module.Resources 0 }}{{ .Type | title | replace "_" " " }}{{ end }} # Module{{ else }}Terraform Azure Module{{ end }}
+
 
   > **Enterprise Terraform Module for Azure Infrastructure**  
   > Part of the [grinntec-terraform-modules-azure](https://github.com/grinntec-terraform-modules-azure) collection

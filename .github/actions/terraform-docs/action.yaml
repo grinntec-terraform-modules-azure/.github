@@ -29,7 +29,7 @@ inputs:
   central_config:
     description: Use central configuration from .github repository
     required: false
-    default: 'false'
+    default: 'true'
   output_file:
     description: Output file for generated documentation
     required: false

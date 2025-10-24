@@ -23,19 +23,11 @@ sections:                       # Specify at a granular level what sections to h
 
 content: |-
 
+  # 🏗️ {{ if .Module.Resources }}{{ with index .Module.Resources 0 }}{{ .Type | title | replace "_" " " }}{{ end }} Module{{ else }}Terraform Azure Module{{ end }}
+
   {{ .Header }}
 
-  ---
-  
-  {{ .Module }}
-
-  {{ range .Module.Resources }}
-  - {{ .GetMode }}.{{ .Spec }} ({{ .Position.Filename }}#{{ .Position.Line }})
-  {{- end }}  
-  
-  # Terraform Azure Module
-
-  > **Enterprise Terraform Module for Azure Infrastructure**
+  > **Enterprise Terraform Module for Azure Infrastructure**  
   > Part of the [grinntec-terraform-modules-azure](https://github.com/grinntec-terraform-modules-azure) collection
 
   ## Overview
@@ -106,12 +98,11 @@ content: |-
   This module uses [Semantic Versioning](https://semver.org/). Always pin to a specific version in production:
   ```hcl
   source = "git::https://github.com/grinntec-terraform-modules-azure/[MODULE-NAME].git?ref=v1.0.0"
+  ```
 
   ---
 
-  > This file was created using [terraform-docs](https://terraform-docs.io/)
-
-  ```
+  > This documentation was automatically generated using [terraform-docs](https://terraform-docs.io/)
   
   {{ .Footer }}
 

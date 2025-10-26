@@ -78,7 +78,7 @@ jobs:
         if: ${{ inputs.enable_security_scan }}
         uses: grinntec-terraform-modules-azure/.github/.github/actions/terraform-security-scan@main
       
-      - name: 📚 Terraform Documentation
+      - name: Terraform Documentation
         uses: grinntec-terraform-modules-azure/.github/.github/actions/terraform-docs@main
         with:
           working_directory: ${{ inputs.working_directory }}

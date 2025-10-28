@@ -84,7 +84,6 @@ jobs:
           working_directory: ${{ inputs.working_directory }}
 
       - name: Commit Documentation Changes
-        if: ${{ inputs.auto_commit && inputs.enable_documentation }}
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "docs: auto-update documentation via terraform-docs"

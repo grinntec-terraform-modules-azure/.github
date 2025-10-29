@@ -69,6 +69,15 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ inputs.terraform_version }}
+
+      - name: Debug - Show Terraform Version
+        run: |
+          echo "::debug::Terraform setup complete"
+          echo "::debug::Requested version: ${{ inputs.terraform_version }}"
+          echo "::group::Terraform Version Information"
+          terraform version
+          echo "::endgroup::"
+          echo "::notice::Using Terraform version: $(terraform version -json | jq -r '.terraform_version')"
     
       - name: Terraform Format Check
         id: fmt-check

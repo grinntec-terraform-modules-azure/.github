@@ -1,5 +1,15 @@
 name: 'Debug - Show Terraform Version'
 description: 'Show and summarize the Terraform version used in the workflow.'
+
+inputs:
+  working_directory:
+    description: 'Working directory for Terraform files'
+    required: false
+    default: '.'
+  terraform_version:
+    description: 'Terraform version being used'
+    required: true
+
 runs:
   using: 'composite'
   steps:
@@ -7,7 +17,7 @@ runs:
       shell: bash
       run: |
         echo "::debug::Terraform setup complete"
-        echo "::debug::Extracted version: ${{ steps.tf-version.outputs.terraform-version }}"
+        echo "::debug::Extracted version: ${{ inputs.terraform_version }}"
         echo "::group::Terraform Version Information"
         terraform version
         echo "::endgroup::"
@@ -17,7 +27,7 @@ runs:
         # Write to job summary
         {
           echo "## Terraform Version Information"
-          echo "- **Extracted from versions.tf**: \`${{ steps.tf-version.outputs.terraform-version }}\`"
+          echo "- **Extracted from versions.tf**: \`${{ inputs.terraform_version }}\`"
           echo "- **Version Used**: \`$TF_VERSION\`"
           echo ""
           echo "### Version Details"

@@ -80,33 +80,9 @@ jobs:
         uses: grinntec-terraform-modules-azure/.github/.github/actions/debug-show-terraform-version@main
         with:
           working_directory: ${{ inputs.working_directory }}
-        # run: |
-        #   echo "::debug::Terraform setup complete"
-        #   echo "::debug::Extracted version: ${{ steps.tf-version.outputs.terraform-version }}"
-        #   echo "::group::Terraform Version Information"
-        #   terraform version
-        #   echo "::endgroup::"
-          
-        #   # Extract version info
-        #   TF_VERSION=$(terraform version -json | jq -r '.terraform_version')
-        #   echo "::notice::Using Terraform version: $TF_VERSION"
-          
-        #   # Write to job summary
-        #   {
-        #     echo "## Terraform Version Information"
-        #     echo "- **Extracted from versions.tf**: \`${{ steps.tf-version.outputs.terraform-version }}\`"
-        #     echo "- **Version Used**: \`$TF_VERSION\`"
-        #     echo ""
-        #     echo "### Version Details"
-        #     echo '```'
-        #     terraform version
-        #     echo '```'
-        #     echo ""
-        #     echo "Reference: https://github.com/hashicorp/terraform/releases"
-        #     echo ""
-        #   } >> $GITHUB_STEP_SUMMARY
-      ## -------------------------------------------------------------------------------------------------------------- ##
-      
+          terraform_version: ${{ steps.tf-version.outputs.terraform-version }}
+
+      ## -------------------------------------------------------------------------------------------------------------- ##  
       - name: Terraform Format
         uses: grinntec-terraform-modules-azure/.github/.github/actions/terraform-format-declarative@main
         with:

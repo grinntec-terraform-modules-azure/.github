@@ -62,17 +62,13 @@ runs:
         BADGE_YELLOW='![Checkov](https://img.shields.io/badge/checkov-issues-yellow.svg)'
         BADGE="$BADGE_YELLOW"
         if [[ -f "$RESULT_FILE" ]]; then
-          PASSED_CHECKS=$(grep 'Passed checks:' "$RESULT_FILE" | awk -F': ' '{print $2}' | tr -d ' ')
           FAILED_CHECKS=$(grep 'Failed checks:' "$RESULT_FILE" | awk -F': ' '{print $2}' | tr -d ' ')
-          if [[ "$FAILED_CHECKS" == "0" && "$PASSED_CHECKS" != "" && "$PASSED_CHECKS" -gt 0 ]]; then
+          if [[ "$FAILED_CHECKS" == "0" ]]; then
             BADGE="$BADGE_GREEN"
           fi
         fi
-        # Remove any existing Checkov badge
         sed -i '/!\[Checkov](https:\/\/img.shields.io\/badge\/checkov-/d' "$README_PATH"
-        # Insert badge at line 2 (after release badge)
         awk -v badge="$BADGE" 'NR==1{print; print badge; next} 1' "$README_PATH" > "${README_PATH}.tmp" && mv "${README_PATH}.tmp" "$README_PATH"
-        echo "Updated README with Checkov badge: $BADGE"
         echo "Updated README with Checkov badge: $BADGE"
 
     - name: Auto-commit README Update

@@ -33,18 +33,31 @@ runs:
         BADGE_GREEN='![Checkov](https://img.shields.io/badge/checkov-passing-brightgreen.svg)'
         BADGE_YELLOW='![Checkov](https://img.shields.io/badge/checkov-issues-yellow.svg)'
         if [[ -f "$RESULT_FILE" ]]; then
-          if grep -q 'Passed checks:' "$RESULT_FILE" && ! grep -q 'Failed checks:' "$RESULT_FILE"; then
+          PASSED_CHECKS=$(grep 'Passed checks:' "$RESULT_FILE" | awk -F': ' '{print $2}' | tr -d ' ')
+          if [[ -n "$PASSED_CHECKS" && "$PASSED_CHECKS" -gt 0 && ! $(grep -q 'Failed checks:' "$RESULT_FILE") ]]; then
             BADGE="$BADGE_GREEN"
           else
             BADGE="$BADGE_YELLOW"
           fi
         else
           BADGE="$BADGE_YELLOW"
-        fi
         # Remove any existing Checkov badge
-        sed -i '/^![Checkov](https:\/\/img.shields.io\/badge\/checkov-/d' "$README_PATH"
-        # Insert badge after release badge
-        sed -i "2i$BADGE\n" "$README_PATH"
+        sed -i '/!\[Checkov](https:\/\/img.shields.io\/badge\/checkov-/d' "$README_PATH"
+        # Insert badge immediately after the release badge
+        awk -v badge="$BADGE" '
+          BEGIN { inserted=0 }
+          /^![Release]\(https:\/\/img.shields.io\/badge\/release-/ {
+            print
+            print badge
+            inserted=1
+            next
+          }
+          { print }
+          END {
+            if (!inserted) print badge
+          }
+        ' "$README_PATH" > "${README_PATH}.tmp" && mv "${README_PATH}.tmp" "$README_PATH"
+        echo "Updated README with Checkov badge: $BADGE"
         echo "Updated README with Checkov badge: $BADGE"
 
     - name: Auto-commit README Update

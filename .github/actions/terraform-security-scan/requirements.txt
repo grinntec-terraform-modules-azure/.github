@@ -1,5 +1,5 @@
 # Checkov security scanner with pinned dependencies for optimal caching
-checkov==3.2.472
+checkov==3.2.488
 
 # Core dependencies (pinning for cache stability)
 policyuniverse>=1.5.1.20231109

@@ -1,0 +1,126 @@
+#######################################################################################################
+# Composite Action: Terraform Format (Declarative)                                                   #
+#                                                                                                     #
+# Purpose:                                                                                            #
+#   - Performs comprehensive Terraform formatting validation and remediation                          #
+#   - Uses declarative GitHub Actions approach instead of imperative shell scripts                   #
+#   - Provides detailed job summary reporting and automatic commit functionality                      #
+#                                                                                                     #
+# How it works:                                                                                       #
+#   1. Check formatting with terraform fmt -check                                                     #
+#   2. Apply formatting if needed with terraform fmt                                                  #
+#   3. Detect what files were changed                                                                 #
+#   4. Report results to job summary                                                                  #
+#   5. Commit changes if any were made                                                                #
+#                                                                                                     #
+# Benefits of Declarative Approach:                                                                  #
+#   - Clear step-by-step conditional logic                                                            #
+#   - Native GitHub Actions features for reporting                                                    #
+#   - Easy to understand and maintain                                                                 #
+#   - Professional job summary reporting                                                              #
+#######################################################################################################
+
+name: Terraform Format (Declarative)
+description: Comprehensive Terraform formatting validation and remediation with declarative approach
+
+inputs:
+  working_directory:
+    description: 'Working directory to run formatting in'
+    required: false
+    default: '.'
+  commit_message:
+    description: 'Commit message for formatting changes'
+    required: false
+    default: 'chore(terraform): auto-format via GitHub Actions'
+  author_name:
+    description: 'Git commit author name'
+    required: false
+    default: 'github-actions[bot]'
+  author_email:
+    description: 'Git commit author email'
+    required: false
+    default: 'github-actions[bot]@users.noreply.github.com'
+
+runs:
+  using: composite
+  steps:
+    - name: Terraform Format Check
+      id: fmt-check
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: terraform fmt -check -diff -recursive .
+      continue-on-error: true
+
+    - name: Report no formatting needed
+      if: steps.fmt-check.outcome == 'success'
+      shell: bash
+      run: |
+        echo "::notice::All Terraform files are already properly formatted"
+        
+        # Write to job summary
+        {
+          echo "## ✅ Terraform Formatting Results"
+          echo ""
+          echo "**All files are already properly formatted!**"
+          echo ""
+          echo "> No formatting changes were needed. All Terraform files follow the standard style conventions."
+          echo ""
+        } >> $GITHUB_STEP_SUMMARY
+
+    - name: Terraform Format Apply
+      if: steps.fmt-check.outcome == 'failure'
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: terraform fmt -recursive .
+
+    - name: Check for formatting changes
+      if: steps.fmt-check.outcome == 'failure'
+      id: fmt-changes
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        if git diff --quiet; then
+          echo "has-changes=false" >> $GITHUB_OUTPUT
+        else
+          echo "has-changes=true" >> $GITHUB_OUTPUT
+          echo "files-changed<<EOF" >> $GITHUB_OUTPUT
+          git diff --name-only | grep -E '\.(tf|tfvars)$' >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Display formatting changes
+      if: steps.fmt-changes.outputs.has-changes == 'true'
+      shell: bash
+      run: |
+        echo "::group::Terraform Formatting Changes"
+        echo "The following files were reformatted:"
+        echo "${{ steps.fmt-changes.outputs.files-changed }}"
+        echo "::endgroup::"
+        echo "::notice::Terraform files have been automatically formatted"
+        
+        # Write formatting results to job summary
+        {
+          echo "## 🔧 Terraform Formatting Results"
+          echo ""
+          echo "✅ **Formatting applied successfully**"
+          echo ""
+          echo "### Files Modified:"
+          echo "${{ steps.fmt-changes.outputs.files-changed }}" | while read -r file; do
+            if [ -n "$file" ]; then
+              echo "- \`$file\`"
+            fi
+          done
+          echo ""
+          echo "> Files have been automatically formatted to follow Terraform style conventions."
+          echo ""
+        } >> $GITHUB_STEP_SUMMARY
+
+    - name: Commit formatting changes
+      if: steps.fmt-changes.outputs.has-changes == 'true'
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: ${{ inputs.commit_message }}
+        file_pattern: "*.tf *.tfvars"
+        commit_options: '--no-verify'
+        commit_user_name: ${{ inputs.author_name }}
+        commit_user_email: ${{ inputs.author_email }}

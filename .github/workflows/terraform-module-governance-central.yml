@@ -105,7 +105,11 @@ jobs:
         with:
           working_directory: ${{ inputs.working_directory }}
 
-      ## -------------------------------------------------------------------------------------------------------------- ##                            
+      ## -------------------------------------------------------------------------------------------------------------- ##
+      - name: Update README with Release Version
+        uses: grinntec-terraform-modules-azure/.github/.github/actions/update-readme-release-version@main
+
+      ## -------------------------------------------------------------------------------------------------------------- ##        
       - name: Commit Documentation Changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:

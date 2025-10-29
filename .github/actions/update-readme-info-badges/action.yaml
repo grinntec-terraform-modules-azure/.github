@@ -11,6 +11,19 @@ runs:
   using: composite
   steps:
 
+    - name: Update README with Release Version
+      shell: bash
+      run: |
+        README_PATH="${{ github.workspace }}/README.md"
+        TAG="${{ steps.get_tag.outputs.latest_tag }}"
+        # Insert or update the release version at the top of README
+        BADGE="![Release](https://img.shields.io/badge/release-$TAG-blue.svg)"
+        # Remove any existing release badge
+        sed -i '/^![Release](https:\/\/img.shields.io\/badge\/release-/d' "$README_PATH"
+        # Insert badge at the top
+        sed -i "1i$BADGE\n" "$README_PATH"
+        echo "Updated README with release badge: $BADGE"
+
     - name: 'Update README with Release Version and Checkov Badge'
       shell: bash
       run: |
@@ -33,19 +46,6 @@ runs:
         # Insert badge after release badge
         sed -i "2i$BADGE\n" "$README_PATH"
         echo "Updated README with Checkov badge: $BADGE"
-
-    - name: Update README with Release Version
-      shell: bash
-      run: |
-        README_PATH="${{ github.workspace }}/README.md"
-        TAG="${{ steps.get_tag.outputs.latest_tag }}"
-        # Insert or update the release version at the top of README
-        BADGE="![Release](https://img.shields.io/badge/release-$TAG-blue.svg)"
-        # Remove any existing release badge
-        sed -i '/^![Release](https:\/\/img.shields.io\/badge\/release-/d' "$README_PATH"
-        # Insert badge at the top
-        sed -i "1i$BADGE\n" "$README_PATH"
-        echo "Updated README with release badge: $BADGE"
 
     - name: Auto-commit README Update
       uses: stefanzweifel/git-auto-commit-action@v5

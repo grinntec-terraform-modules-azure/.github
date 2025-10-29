@@ -4,14 +4,17 @@ description: 'Validates Terraform configuration syntax and logic without creatin
 runs:
   using: 'composite'
   steps:
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
-      with:
-        terraform_version: latest
-        terraform_wrapper: true
-
-    - name: Run Terraform Validate
+    - name: Terraform Validate
       shell: bash
       run: |
-        chmod +x "${{ github.action_path }}/script.sh"
-        "${{ github.action_path }}/script.sh"
+        echo "::group::Terraform Validate"
+        terraform validate -no-color
+        echo "::endgroup::"
+        # Write to job summary
+        {
+          echo "## Terraform Validation Results"
+          echo '```'
+          terraform validate -no-color
+          echo '```'
+          echo "Reference: https://developer.hashicorp.com/terraform/cli/commands/validate"
+        } >> $GITHUB_STEP_SUMMARY

@@ -114,7 +114,7 @@ jobs:
           # Write to job summary
           {
             echo "## Terraform Version Information"
-            echo "- **Extracted from `versions.tf`**: \`${{ steps.tf-version.outputs.terraform-version }}\`"
+            echo "- **Extracted from** `versions.tf`: \`${{ steps.tf-version.outputs.terraform-version }}\`"
             echo "- **Version Used**: \`$TF_VERSION\`"
             echo ""
             echo "### Version Details"

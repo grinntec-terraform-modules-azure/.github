@@ -51,6 +51,7 @@ jobs:
       pull-requests: write  # Allow creating pull requests if needed
     
     steps:
+      
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -60,13 +61,50 @@ jobs:
       - name: Cache Terraform Providers
         uses: grinntec-terraform-modules-azure/.github/.github/actions/cache-terraform-providers@main
 
+        # Change to use the TF version defined in the TF file being run
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ inputs.terraform_version }}
     
-      - name: Terraform Format
-        uses: grinntec-terraform-modules-azure/.github/.github/actions/terraform-fmt@main
+      - name: Terraform Format Check
+        id: fmt-check
+        run: terraform fmt -check -diff -recursive .
+        continue-on-error: true
+
+      - name: Terraform Format Apply
+        if: steps.fmt-check.outcome == 'failure'
+        run: terraform fmt -recursive .
+
+      - name: Check for formatting changes
+        if: steps.fmt-check.outcome == 'failure'
+        id: fmt-changes
+        run: |
+          if git diff --quiet; then
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            echo "files-changed<<EOF" >> $GITHUB_OUTPUT
+            git diff --name-only | grep -E '\.(tf|tfvars)$' >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Display formatting changes
+        if: steps.fmt-changes.outputs.has-changes == 'true'
+        run: |
+          echo "::group::Terraform Formatting Changes"
+          echo "The following files were reformatted:"
+          echo "${{ steps.fmt-changes.outputs.files-changed }}"
+          echo "::endgroup::"
+          echo "::notice::Terraform files have been automatically formatted"
+
+      - name: Commit formatting changes
+        if: steps.fmt-changes.outputs.has-changes == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(terraform): auto-format via GitHub Actions"
+          file_pattern: "*.tf *.tfvars"
+          commit_options: '--no-verify'
 
       - name: Terraform Validate
         uses: grinntec-terraform-modules-azure/.github/.github/actions/terraform-validate@main

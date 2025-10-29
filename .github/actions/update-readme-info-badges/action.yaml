@@ -44,7 +44,7 @@ runs:
         CHECKOV_BADGE_YELLOW='![Checkov](https://img.shields.io/badge/checkov-issues-yellow.svg)'
         CHECKOV_BADGE="$CHECKOV_BADGE_YELLOW"
         if [[ -f "$CHECKOV_RESULT_FILE" ]]; then
-          FAILED_CHECKS=$(grep 'Failed checks:' "$CHECKOV_RESULT_FILE" | awk -F': ' '{print $2}' | tr -d ' ')
+          FAILED_CHECKS=$(grep 'Failed checks:' "$CHECKOV_RESULT_FILE" | awk -F':' '{print $2}' | tr -d ' ' | tr -d '\n')
           if [[ "$FAILED_CHECKS" == "0" ]]; then
             CHECKOV_BADGE="$CHECKOV_BADGE_GREEN"
           fi

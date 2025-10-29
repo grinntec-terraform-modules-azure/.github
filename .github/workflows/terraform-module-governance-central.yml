@@ -55,15 +55,10 @@ jobs:
       
       - name: Debug - Show Working Directory
         run: |
-          echo "::debug::Starting debug information collection"
-          echo "::debug::Current working directory: $(pwd)"
-          echo "::debug::Repository root check: $(git rev-parse --show-toplevel)"
           echo "::group::Debug Information"
-          echo "::debug::Listing repository contents"
+          echo "Current working directory: $(pwd)"
+          echo "Repository contents:"
           ls -la
-          echo "::debug::Checking for Terraform files"
-          find . -name "*.tf" -type f | head -10
-          echo "::debug::Debug information collection complete"
           echo "::endgroup::"
            
       - name: Cache Terraform Providers

@@ -64,35 +64,6 @@ jobs:
         
       ## -------------------------------------------------------------------------------------------------------------- ##
         # Extract Terraform version from versions.tf file
-      # - name: Extract Terraform Version from Code
-      #   id: tf-version
-      #   run: |
-      #     echo "::debug::Looking for Terraform version in versions.tf files"
-          
-      #     # Look for versions.tf in working directory and subdirectories
-      #     VERSION_FILE=""
-      #     if [ -f "${{ inputs.working_directory }}/versions.tf" ]; then
-      #       VERSION_FILE="${{ inputs.working_directory }}/versions.tf"
-      #     elif [ -f "versions.tf" ]; then
-      #       VERSION_FILE="versions.tf"
-      #     else
-      #       echo "::error::No versions.tf file found. Please add a versions.tf file to your module."
-      #       exit 1
-      #     fi
-          
-      #     echo "::debug::Found versions.tf at: $VERSION_FILE"
-          
-      #     # Extract the minimum required version using grep and sed
-      #     TF_VERSION=$(grep -A 1 'required_version' "$VERSION_FILE" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-          
-      #     if [ -z "$TF_VERSION" ]; then
-      #       echo "::error::Could not parse Terraform version from $VERSION_FILE. Please specify required_version in versions.tf."
-      #       exit 1
-      #     else
-      #       echo "::notice::Extracted Terraform version $TF_VERSION from $VERSION_FILE"
-      #       echo "terraform-version=$TF_VERSION" >> $GITHUB_OUTPUT
-      #     fi
-
       - name: Extract Terraform Version from Code
         id: tf-version
         uses: grinntec-terraform-modules-azure/.github/.github/actions/extract-terraform-version@main
@@ -106,31 +77,34 @@ jobs:
 
       ## -------------------------------------------------------------------------------------------------------------- ##          
       - name: Debug - Show Terraform Version
-        run: |
-          echo "::debug::Terraform setup complete"
-          echo "::debug::Extracted version: ${{ steps.tf-version.outputs.terraform-version }}"
-          echo "::group::Terraform Version Information"
-          terraform version
-          echo "::endgroup::"
+        uses: grinntec-terraform-modules-azure/.github/.github/actions/debug-show-terraform-version@main
+        with:
+          working_directory: ${{ inputs.working_directory }}
+        # run: |
+        #   echo "::debug::Terraform setup complete"
+        #   echo "::debug::Extracted version: ${{ steps.tf-version.outputs.terraform-version }}"
+        #   echo "::group::Terraform Version Information"
+        #   terraform version
+        #   echo "::endgroup::"
           
-          # Extract version info
-          TF_VERSION=$(terraform version -json | jq -r '.terraform_version')
-          echo "::notice::Using Terraform version: $TF_VERSION"
+        #   # Extract version info
+        #   TF_VERSION=$(terraform version -json | jq -r '.terraform_version')
+        #   echo "::notice::Using Terraform version: $TF_VERSION"
           
-          # Write to job summary
-          {
-            echo "## Terraform Version Information"
-            echo "- **Extracted from versions.tf**: \`${{ steps.tf-version.outputs.terraform-version }}\`"
-            echo "- **Version Used**: \`$TF_VERSION\`"
-            echo ""
-            echo "### Version Details"
-            echo '```'
-            terraform version
-            echo '```'
-            echo ""
-            echo "Reference: https://github.com/hashicorp/terraform/releases"
-            echo ""
-          } >> $GITHUB_STEP_SUMMARY
+        #   # Write to job summary
+        #   {
+        #     echo "## Terraform Version Information"
+        #     echo "- **Extracted from versions.tf**: \`${{ steps.tf-version.outputs.terraform-version }}\`"
+        #     echo "- **Version Used**: \`$TF_VERSION\`"
+        #     echo ""
+        #     echo "### Version Details"
+        #     echo '```'
+        #     terraform version
+        #     echo '```'
+        #     echo ""
+        #     echo "Reference: https://github.com/hashicorp/terraform/releases"
+        #     echo ""
+        #   } >> $GITHUB_STEP_SUMMARY
       ## -------------------------------------------------------------------------------------------------------------- ##
       
       - name: Terraform Format

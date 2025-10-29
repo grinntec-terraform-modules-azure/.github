@@ -11,6 +11,16 @@ runs:
   using: composite
   steps:
 
+    - name: Get Latest Release Tag
+      id: get_tag
+      shell: bash
+      run: |
+        TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "unreleased")
+        if [ -z "$TAG" ]; then
+          TAG="unreleased"
+        fi
+        echo "latest_tag=$TAG" >> $GITHUB_OUTPUT
+
     - name: Update README with Release Version
       shell: bash
       run: |

@@ -84,9 +84,7 @@ jobs:
           
           # Write to job summary
           {
-            echo "## 🚀 Terraform Module Governance"
-            echo ""
-            echo "### Terraform Version Information"
+            echo "## Terraform Version Information"
             echo "- **Requested Version**: \`${{ inputs.terraform_version }}\`"
             echo "- **Actual Version**: \`$TF_VERSION\`"
             echo ""
@@ -94,6 +92,8 @@ jobs:
             echo '```'
             terraform version
             echo '```'
+            echo ""
+            echo "Reference: https://github.com/hashicorp/terraform/releases"
             echo ""
           } >> $GITHUB_STEP_SUMMARY
     

@@ -50,9 +50,8 @@ runs:
             fi
           fi
         fi
-        # Remove any existing Checkov badge
+        # Always insert the badge, even if results file is missing
         sed -i '/!\[Checkov](https:\/\/img.shields.io\/badge\/checkov-/d' "$README_PATH"
-        # Insert badge immediately after the release badge
         awk -v badge="$BADGE" '
           BEGIN { inserted=0 }
           /^![Release]\(https:\/\/img.shields.io\/badge\/release-/ {

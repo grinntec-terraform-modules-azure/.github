@@ -106,8 +106,8 @@ jobs:
           working_directory: ${{ inputs.working_directory }}
 
       ## -------------------------------------------------------------------------------------------------------------- ##
-      - name: Update README with Release Version
-        uses: grinntec-terraform-modules-azure/.github/.github/actions/update-readme-release-version@main
+      - name: Update README with info badges
+        uses: grinntec-terraform-modules-azure/.github/.github/actions/update-readme-info-badges@main
 
       ## -------------------------------------------------------------------------------------------------------------- ##        
       - name: Commit Documentation Changes

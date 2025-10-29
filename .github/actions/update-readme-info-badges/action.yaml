@@ -1,0 +1,72 @@
+name: Update README with Info Badges
+description: Extracts the required data and updates the README with relevant info badges.
+
+inputs:
+  working_directory:
+    description: 'Working directory for Terraform files'
+    required: false
+    default: '.'
+
+runs:
+  using: composite
+  steps:
+
+    - name: 'Update README with Release Version and Checkov Badge'
+      shell: bash
+      run: |
+        README_PATH="${{ github.workspace }}/README.md"
+        # Assume Checkov results are in tf-management/checkov/module/results_cli.txt
+        RESULT_FILE="tf-management/checkov/module/results_cli.txt"
+        BADGE_GREEN='![Checkov](https://img.shields.io/badge/checkov-passing-brightgreen.svg)'
+        BADGE_YELLOW='![Checkov](https://img.shields.io/badge/checkov-issues-yellow.svg)'
+        if [[ -f "$RESULT_FILE" ]]; then
+          if grep -q 'Passed checks:' "$RESULT_FILE" && ! grep -q 'Failed checks:' "$RESULT_FILE"; then
+            BADGE="$BADGE_GREEN"
+          else
+            BADGE="$BADGE_YELLOW"
+          fi
+        else
+          BADGE="$BADGE_YELLOW"
+        fi
+        # Remove any existing Checkov badge
+        sed -i '/^![Checkov](https:\/\/img.shields.io\/badge\/checkov-/d' "$README_PATH"
+        # Insert badge after release badge
+        sed -i "2i$BADGE\n" "$README_PATH"
+        echo "Updated README with Checkov badge: $BADGE"
+    
+    
+    
+    
+
+    
+    # # - name: 'Update README with Release Version'
+    # #   description: 'Dynamically update the README with the latest release version after governance workflow runs.'
+    # #   runs:
+    # #     using: 'composite'
+    # #     steps:
+    # #       - name: Get Latest Release Tag
+    # #         id: get_tag
+    # #         shell: bash
+    # #         run: |
+    # #           TAG=$(git describe --tags --abbrev=0)
+    # #           echo "latest_tag=$TAG" >> $GITHUB_OUTPUT
+
+    #       # - name: Update README with Release Version
+    #       #   shell: bash
+    #       #   run: |
+    #       #     README_PATH="${{ github.workspace }}/README.md"
+    #       #     TAG="${{ steps.get_tag.outputs.latest_tag }}"
+    #       #     # Insert or update the release version at the top of README
+    #       #     BADGE="![Release](https://img.shields.io/badge/release-$TAG-blue.svg)"
+    #       #     # Remove any existing release badge
+    #       #     sed -i '/^![Release](https:\/\/img.shields.io\/badge\/release-/d' "$README_PATH"
+    #       #     # Insert badge at the top
+    #       #     sed -i "1i$BADGE\n" "$README_PATH"
+    #       #     echo "Updated README with release badge: $BADGE"
+
+    # - name: Auto-commit README Update
+    #   uses: stefanzweifel/git-auto-commit-action@v5
+    #   with:
+    #     commit_message: "docs: update README with release version ${{ steps.get_tag.outputs.latest_tag }}"
+    #     name: 'Update README with Release Version'
+    #     commit_options: '--no-verify'

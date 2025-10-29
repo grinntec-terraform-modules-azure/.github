@@ -80,20 +80,20 @@ jobs:
           working_directory: ${{ inputs.working_directory }}
           terraform_version: ${{ steps.tf-version.outputs.terraform-version }}
 
-
       ## -------------------------------------------------------------------------------------------------------------- ##  
       - name: Terraform Format
         uses: grinntec-terraform-modules-azure/.github/.github/actions/terraform-format-declarative@main
         with:
           working_directory: ${{ inputs.working_directory }}
 
-    ## -------------------------------------------------------------------------------------------------------------- ##          
+      ## -------------------------------------------------------------------------------------------------------------- ##          
       - name: Terraform Validate
         uses: grinntec-terraform-modules-azure/.github/.github/actions/terraform-validate@main
 
       - name: TF_Lint
         uses: grinntec-terraform-modules-azure/.github/.github/actions/tf-lint@main
-
+      
+      ## -------------------------------------------------------------------------------------------------------------- ##          
       - name: Terraform Security Scan
         if: ${{ inputs.enable_security_scan }}
         uses: grinntec-terraform-modules-azure/.github/.github/actions/terraform-security-scan@main

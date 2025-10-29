@@ -4,6 +4,13 @@ description: 'Validates Terraform configuration syntax and logic without creatin
 runs:
   using: 'composite'
   steps:
+    - name: Terraform Init (no backend)
+      shell: bash
+      run: |
+        echo "::group::Terraform Init"
+        terraform init -backend=false
+        echo "::endgroup::"
+
     - name: Terraform Validate
       shell: bash
       run: |

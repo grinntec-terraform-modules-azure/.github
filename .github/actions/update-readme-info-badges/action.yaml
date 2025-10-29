@@ -33,8 +33,13 @@ runs:
         # Insert badge after release badge
         sed -i "2i$BADGE\n" "$README_PATH"
         echo "Updated README with Checkov badge: $BADGE"
-    
-    
+
+    - name: Auto-commit README Update
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "docs: update README with release version ${{ steps.get_tag.outputs.latest_tag }}"
+        name: 'Update README with Release Version'
+        commit_options: '--no-verify'
     
     
 
@@ -64,9 +69,4 @@ runs:
     #       #     sed -i "1i$BADGE\n" "$README_PATH"
     #       #     echo "Updated README with release badge: $BADGE"
 
-    # - name: Auto-commit README Update
-    #   uses: stefanzweifel/git-auto-commit-action@v5
-    #   with:
-    #     commit_message: "docs: update README with release version ${{ steps.get_tag.outputs.latest_tag }}"
-    #     name: 'Update README with Release Version'
-    #     commit_options: '--no-verify'
+

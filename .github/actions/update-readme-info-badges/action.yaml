@@ -53,22 +53,3 @@ runs:
         commit_message: "docs: update README with release version ${{ steps.get_tag.outputs.latest_tag }}"
         name: 'Update README with Release Version'
         commit_options: '--no-verify'
-    
-    
-
-    
-    # # - name: 'Update README with Release Version'
-    # #   description: 'Dynamically update the README with the latest release version after governance workflow runs.'
-    # #   runs:
-    # #     using: 'composite'
-    # #     steps:
-    # #       - name: Get Latest Release Tag
-    # #         id: get_tag
-    # #         shell: bash
-    # #         run: |
-    # #           TAG=$(git describe --tags --abbrev=0)
-    # #           echo "latest_tag=$TAG" >> $GITHUB_OUTPUT
-
-
-
-

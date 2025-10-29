@@ -1,4 +1,4 @@
-name: Terraform Module Governance
+name: Terraform Module Governance (Central)
 
 # This is a reusable workflow that can be called by any Terraform module repository
 # in the grinntec-terraform-modules-azure organization

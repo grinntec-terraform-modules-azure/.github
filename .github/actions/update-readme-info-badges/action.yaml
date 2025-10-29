@@ -34,6 +34,25 @@ runs:
         sed -i "1i$BADGE\n" "$README_PATH"
         echo "Updated README with release badge: $BADGE"
 
+    - name: Update README with TFLint Badge
+      shell: bash
+      run: |
+        README_PATH="${{ github.workspace }}/README.md"
+        TFLINT_RESULT_FILE="tf-management/tf-lint/results/tf-lint-results-module.txt"
+        BADGE_GREEN='![TFLint](https://img.shields.io/badge/tflint-passing-brightgreen.svg)'
+        BADGE_YELLOW='![TFLint](https://img.shields.io/badge/tflint-issues-yellow.svg)'
+        BADGE="$BADGE_YELLOW"
+        if [[ -f "$TFLINT_RESULT_FILE" ]]; then
+          if grep -q 'Analysis Status: PASSED' "$TFLINT_RESULT_FILE"; then
+            BADGE="$BADGE_GREEN"
+          fi
+        fi
+        # Remove any existing TFLint badge
+        sed -i '/!\[TFLint](https:\/\/img.shields.io\/badge\/tflint-/d' "$README_PATH"
+        # Insert badge at line 3 (after Checkov badge)
+        awk -v badge="$BADGE" 'NR==2{print; print badge; next} 1' "$README_PATH" > "${README_PATH}.tmp" && mv "${README_PATH}.tmp" "$README_PATH"
+        echo "Updated README with TFLint badge: $BADGE"
+
     - name: Update README with Release Version and Checkov Badge
       shell: bash
       run: |

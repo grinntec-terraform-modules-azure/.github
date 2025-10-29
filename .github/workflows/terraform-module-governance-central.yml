@@ -121,8 +121,8 @@ jobs:
           # Write to job summary
           {
             echo "## Terraform Version Information"
-            echo "- **Manual WorkflowTrigger Version**: \`${{ inputs.terraform_version }}\`"
-            echo "- **Extracted from versions.tf**: \`${{ steps.tf-version.outputs.terraform-version }}\`"
+            echo "- **Manual Workflow Trigger Version**: \`${{ inputs.terraform_version }}\`"
+            echo "- **Extracted from `versions.tf`**: \`${{ steps.tf-version.outputs.terraform-version }}\`"
             echo "- **Version Used**: \`$TF_VERSION\`"
             echo ""
             echo "### Version Details"

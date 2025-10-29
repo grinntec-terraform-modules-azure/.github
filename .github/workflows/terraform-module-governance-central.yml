@@ -74,8 +74,8 @@ jobs:
         with:
           terraform_version: ${{ steps.tf-version.outputs.terraform-version }}
 
-      - name: Debug - Show Terraform Version
-        uses: grinntec-terraform-modules-azure/.github/.github/actions/debug-show-terraform-version@main
+      - name: Show Terraform Version
+        uses: grinntec-terraform-modules-azure/.github/.github/actions/show-terraform-version@main
         with:
           working_directory: ${{ inputs.working_directory }}
           terraform_version: ${{ steps.tf-version.outputs.terraform-version }}
@@ -90,6 +90,7 @@ jobs:
       - name: Terraform Validate
         uses: grinntec-terraform-modules-azure/.github/.github/actions/terraform-validate@main
 
+      ## -------------------------------------------------------------------------------------------------------------- ##                  
       - name: TF_Lint
         uses: grinntec-terraform-modules-azure/.github/.github/actions/tf-lint@main
       
@@ -98,6 +99,7 @@ jobs:
         if: ${{ inputs.enable_security_scan }}
         uses: grinntec-terraform-modules-azure/.github/.github/actions/terraform-security-scan@main
       
+      ## -------------------------------------------------------------------------------------------------------------- ##                  
       - name: Terraform Documentation
         uses: grinntec-terraform-modules-azure/.github/.github/actions/terraform-docs@main
         with:

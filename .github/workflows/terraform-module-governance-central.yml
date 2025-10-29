@@ -105,6 +105,7 @@ jobs:
         with:
           working_directory: ${{ inputs.working_directory }}
 
+      ## -------------------------------------------------------------------------------------------------------------- ##                            
       - name: Commit Documentation Changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:

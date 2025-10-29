@@ -44,27 +44,15 @@ runs:
         BADGE="$BADGE_YELLOW"
         if [[ -f "$RESULT_FILE" ]]; then
           PASSED_CHECKS=$(grep 'Passed checks:' "$RESULT_FILE" | awk -F': ' '{print $2}' | tr -d ' ')
-          if [[ -n "$PASSED_CHECKS" && "$PASSED_CHECKS" -gt 0 ]]; then
-            if ! grep -q 'Failed checks:' "$RESULT_FILE"; then
-              BADGE="$BADGE_GREEN"
-            fi
+          FAILED_CHECKS=$(grep 'Failed checks:' "$RESULT_FILE" | awk -F': ' '{print $2}' | tr -d ' ')
+          if [[ "$FAILED_CHECKS" == "0" && "$PASSED_CHECKS" != "" && "$PASSED_CHECKS" -gt 0 ]]; then
+            BADGE="$BADGE_GREEN"
           fi
         fi
-        # Always insert the badge, even if results file is missing
+        # Remove any existing Checkov badge
         sed -i '/!\[Checkov](https:\/\/img.shields.io\/badge\/checkov-/d' "$README_PATH"
-        awk -v badge="$BADGE" '
-          BEGIN { inserted=0 }
-          /^![Release]\(https:\/\/img.shields.io\/badge\/release-/ {
-            print
-            print badge
-            inserted=1
-            next
-          }
-          { print }
-          END {
-            if (!inserted) print badge
-          }
-        ' "$README_PATH" > "${README_PATH}.tmp" && mv "${README_PATH}.tmp" "$README_PATH"
+        # Insert badge at line 2 (after release badge)
+        awk -v badge="$BADGE" 'NR==1{print; print badge; next} 1' "$README_PATH" > "${README_PATH}.tmp" && mv "${README_PATH}.tmp" "$README_PATH"
         echo "Updated README with Checkov badge: $BADGE"
         echo "Updated README with Checkov badge: $BADGE"
 

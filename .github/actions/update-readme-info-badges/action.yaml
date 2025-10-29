@@ -25,9 +25,12 @@ runs:
       shell: bash
       run: |
         README_PATH="${{ github.workspace }}/README.md"
+        
         TAG="${{ steps.get_tag.outputs.latest_tag }}"
+        
         # Release badge
         RELEASE_BADGE="![Release](https://img.shields.io/badge/release-$TAG-blue.svg)"
+        
         # TFLint badge
         TFLINT_RESULT_FILE="tf-management/tf-lint/results/tf-lint-results-module.txt"
         TFLINT_BADGE_GREEN='![TFLint](https://img.shields.io/badge/tflint-passing-brightgreen.svg)'
@@ -38,21 +41,23 @@ runs:
             TFLINT_BADGE="$TFLINT_BADGE_GREEN"
           fi
         fi
+
         # Checkov badge
         CHECKOV_RESULT_FILE="tf-management/checkov/module/results_cli.txt"
-        CHECKOV_BADGE_GREEN='![Checkov](https://img.shields.io/badge/checkov-passing-brightgreen.svg)'
-        CHECKOV_BADGE_YELLOW='![Checkov](https://img.shields.io/badge/checkov-issues-yellow.svg)'
+        CHECKOV_BADGE_GREEN='![CHECKOV](https://img.shields.io/badge/checkov-passing-brightgreen.svg)'
+        CHECKOV_BADGE_YELLOW='![CHECKOV](https://img.shields.io/badge/checkov-issues-yellow.svg)'
         CHECKOV_BADGE="$CHECKOV_BADGE_YELLOW"
         if [[ -f "$CHECKOV_RESULT_FILE" ]]; then
-          FAILED_CHECKS=$(grep 'Failed checks:' "$CHECKOV_RESULT_FILE" | awk -F':' '{print $2}' | tr -d ' ' | tr -d '\n')
-          if [[ "$FAILED_CHECKS" == "0" ]]; then
+          if grep -q 'Failed checks: 0' "$CHECKOV_RESULT_FILE"; then
             CHECKOV_BADGE="$CHECKOV_BADGE_GREEN"
           fi
         fi
+
         # Remove any existing badges
         sed -i '/!\[Release](https:\/\/img.shields.io\/badge\/release-/d' "$README_PATH"
         sed -i '/!\[TFLint](https:\/\/img.shields.io\/badge\/tflint-/d' "$README_PATH"
         sed -i '/!\[Checkov](https:\/\/img.shields.io\/badge\/checkov-/d' "$README_PATH"
+        
         # Insert all badges on the top row
         BADGE_ROW="$RELEASE_BADGE $CHECKOV_BADGE $TFLINT_BADGE"
         sed -i "1i$BADGE_ROW\n" "$README_PATH"

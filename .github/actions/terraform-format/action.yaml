@@ -59,7 +59,7 @@ runs:
         
         # Write to job summary
         {
-          echo "## ✅ Terraform Formatting Results"
+          echo "## Terraform Format"
           echo ""
           echo "**All files are already properly formatted!**"
           echo ""
@@ -100,7 +100,7 @@ runs:
         
         # Write formatting results to job summary
         {
-          echo "## 🔧 Terraform Formatting Results"
+          echo "## Terraform Format"
           echo ""
           echo "✅ **Formatting applied successfully**"
           echo ""

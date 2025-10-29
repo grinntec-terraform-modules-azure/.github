@@ -65,17 +65,48 @@ jobs:
         uses: grinntec-terraform-modules-azure/.github/.github/actions/cache-terraform-providers@main
       ## -------------------------------------------------------------------------------------------------------------- ##
 
-        # Change to use the TF version defined in the TF file being run
+        # Extract Terraform version from versions.tf file
+      - name: Extract Terraform Version from Code
+        id: tf-version
+        run: |
+          echo "::debug::Looking for Terraform version in versions.tf files"
+          
+          # Look for versions.tf in working directory and subdirectories
+          VERSION_FILE=""
+          if [ -f "${{ inputs.working_directory }}/versions.tf" ]; then
+            VERSION_FILE="${{ inputs.working_directory }}/versions.tf"
+          elif [ -f "versions.tf" ]; then
+            VERSION_FILE="versions.tf"
+          else
+            echo "::warning::No versions.tf file found, using input version"
+            echo "terraform-version=${{ inputs.terraform_version }}" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          echo "::debug::Found versions.tf at: $VERSION_FILE"
+          
+          # Extract the minimum required version using grep and sed
+          TF_VERSION=$(grep -A 1 'required_version' "$VERSION_FILE" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+          
+          if [ -z "$TF_VERSION" ]; then
+            echo "::warning::Could not parse Terraform version from $VERSION_FILE, using input version"
+            echo "terraform-version=${{ inputs.terraform_version }}" >> $GITHUB_OUTPUT
+          else
+            echo "::notice::Extracted Terraform version $TF_VERSION from $VERSION_FILE"
+            echo "terraform-version=$TF_VERSION" >> $GITHUB_OUTPUT
+          fi
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: ${{ inputs.terraform_version }}
+          terraform_version: ${{ steps.tf-version.outputs.terraform-version }}
 
       ## -------------------------------------------------------------------------------------------------------------- ##          
       - name: Debug - Show Terraform Version
         run: |
           echo "::debug::Terraform setup complete"
-          echo "::debug::Requested version: ${{ inputs.terraform_version }}"
+          echo "::debug::Input version: ${{ inputs.terraform_version }}"
+          echo "::debug::Extracted version: ${{ steps.tf-version.outputs.terraform-version }}"
           echo "::group::Terraform Version Information"
           terraform version
           echo "::endgroup::"
@@ -87,7 +118,9 @@ jobs:
           # Write to job summary
           {
             echo "## Terraform Version Information"
-            echo "- **Requested Version**: \`${{ inputs.terraform_version }}\`"
+            echo "- **Input Version**: \`${{ inputs.terraform_version }}\`"
+            echo "- **Extracted from Code**: \`${{ steps.tf-version.outputs.terraform-version }}\`"
+            echo "- **Actual Version**: \`$TF_VERSION\`"
             echo "- **Actual Version**: \`$TF_VERSION\`"
             echo ""
             echo "### Version Details"

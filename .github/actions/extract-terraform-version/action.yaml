@@ -1,0 +1,41 @@
+
+name: Extract Terraform Version from Code
+description: Extracts the required Terraform version from versions.tf in the specified working directory.
+
+inputs:
+  working_directory:
+    description: 'Working directory for Terraform files'
+    required: false
+    default: '.'
+
+outputs:
+  terraform-version:
+    description: 'Extracted Terraform version from versions.tf'
+    value: ${{ steps.extract-version.outputs.terraform-version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Extract Terraform Version
+      id: extract-version
+      shell: bash
+      run: |
+        echo "::debug::Looking for Terraform version in versions.tf files"
+        VERSION_FILE=""
+        if [ -f "${{ inputs.working_directory }}/versions.tf" ]; then
+          VERSION_FILE="${{ inputs.working_directory }}/versions.tf"
+        elif [ -f "versions.tf" ]; then
+          VERSION_FILE="versions.tf"
+        else
+          echo "::error::No versions.tf file found. Please add a versions.tf file to your module."
+          exit 1
+        fi
+        echo "::debug::Found versions.tf at: $VERSION_FILE"
+        TF_VERSION=$(grep -A 1 'required_version' "$VERSION_FILE" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+"?' | head -1 | tr -d '"')
+        if [ -z "$TF_VERSION" ]; then
+          echo "::error::Could not parse Terraform version from $VERSION_FILE. Please specify required_version in versions.tf."
+          exit 1
+        else
+          echo "::notice::Extracted Terraform version $TF_VERSION from $VERSION_FILE"
+          echo "terraform-version=$TF_VERSION" >> $GITHUB_OUTPUT
+        fi

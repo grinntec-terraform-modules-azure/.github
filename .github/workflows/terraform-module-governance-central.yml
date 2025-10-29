@@ -35,11 +35,6 @@ on:
         required: false
         type: string        
         default: 'https://raw.githubusercontent.com/grinntec-terraform-modules-azure/.github/main/terraform-configs/tf-docs-standard.yaml'
-      use_central_config:
-        description: 'Use centralized configuration from .github repository'
-        required: false
-        type: boolean
-        default: false
 
 jobs:
   terraform-governance:
@@ -57,6 +52,14 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.ref }}
+      
+      - name: Debug - Show Working Directory
+        run: |
+          echo "::group::Debug Information"
+          echo "Current working directory: $(pwd)"
+          echo "Repository contents:"
+          ls -la
+          echo "::endgroup::"
            
       - name: Cache Terraform Providers
         uses: grinntec-terraform-modules-azure/.github/.github/actions/cache-terraform-providers@main

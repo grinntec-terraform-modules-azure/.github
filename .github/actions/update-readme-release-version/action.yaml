@@ -1,0 +1,32 @@
+name: 'Update README with Release Version'
+description: 'Dynamically update the README with the latest release version after governance workflow runs.'
+runs:
+  using: 'composite'
+  steps:
+    - name: Get Latest Release Tag
+      id: get_tag
+      shell: bash
+      run: |
+        TAG=$(git describe --tags --abbrev=0)
+        echo "latest_tag=$TAG" >> $GITHUB_OUTPUT
+
+    - name: Update README with Release Version
+      shell: bash
+      run: |
+        README_PATH="${{ github.workspace }}/README.md"
+        TAG="${{ steps.get_tag.outputs.latest_tag }}"
+        # Insert or update the release version at the top of README
+        if grep -q '^# Module Release:' "$README_PATH"; then
+          sed -i "1s|^# Module Release:.*|# Module Release: $TAG|" "$README_PATH"
+        else
+          sed -i "1i# Module Release: $TAG\n" "$README_PATH"
+        fi
+        echo "Updated README with release version: $TAG"
+
+    - name: Auto-commit README Update
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: "docs: update README with release version ${{ steps.get_tag.outputs.latest_tag }}"
+        file_pattern: "README.md"
+        commit_options: '--no-verify'
+        skip_dirty_check: false

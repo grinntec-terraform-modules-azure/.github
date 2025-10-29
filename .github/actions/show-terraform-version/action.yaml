@@ -26,7 +26,7 @@ runs:
         echo "::notice::Using Terraform version: $TF_VERSION"
         # Write to job summary
         {
-          echo "📄 ## Terraform Version Information"
+          echo "## 📄 Terraform Version Information"
           echo "- **Extracted from versions.tf**: \`${{ inputs.terraform_version }}\`"
           echo "- **Version Used**: \`$TF_VERSION\`"
           echo ""

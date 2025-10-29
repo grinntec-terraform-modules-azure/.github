@@ -36,6 +36,11 @@ on:
         type: string        
         default: 'https://raw.githubusercontent.com/grinntec-terraform-modules-azure/.github/main/terraform-configs/tf-docs-standard.yaml'
 
+# Ensure workflows run serially to avoid conflicts with git operations
+concurrency:
+  group: terraform-governance-${{ github.repository }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   terraform-governance:
     name: Terraform Module Governance

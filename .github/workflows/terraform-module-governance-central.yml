@@ -69,16 +69,17 @@ jobs:
         with:
           working_directory: ${{ inputs.working_directory }}
 
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ steps.tf-version.outputs.terraform-version }}
+
       - name: Debug - Show Terraform Version
         uses: grinntec-terraform-modules-azure/.github/.github/actions/debug-show-terraform-version@main
         with:
           working_directory: ${{ inputs.working_directory }}
           terraform_version: ${{ steps.tf-version.outputs.terraform-version }}
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ steps.tf-version.outputs.terraform-version }}
 
       ## -------------------------------------------------------------------------------------------------------------- ##  
       - name: Terraform Format

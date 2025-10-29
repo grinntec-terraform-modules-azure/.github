@@ -46,13 +46,15 @@ jobs:
       pull-requests: write  # Allow creating pull requests if needed
     
     steps:
-      
+
+      ## -------------------------------------------------------------------------------------------------------------- ##      
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.ref }}
       
+      ## -------------------------------------------------------------------------------------------------------------- ##          
       - name: Debug - Show Working Directory
         run: |
           echo "::group::Debug Information"
@@ -60,11 +62,12 @@ jobs:
           echo "Repository contents:"
           ls -la
           echo "::endgroup::"
-           
+
+      ## -------------------------------------------------------------------------------------------------------------- ##          
       - name: Cache Terraform Providers
         uses: grinntec-terraform-modules-azure/.github/.github/actions/cache-terraform-providers@main
+        
       ## -------------------------------------------------------------------------------------------------------------- ##
-
         # Extract Terraform version from versions.tf file
       - name: Extract Terraform Version from Code
         id: tf-version
@@ -118,10 +121,9 @@ jobs:
           # Write to job summary
           {
             echo "## Terraform Version Information"
-            echo "- **Input Version**: \`${{ inputs.terraform_version }}\`"
-            echo "- **Extracted from Code**: \`${{ steps.tf-version.outputs.terraform-version }}\`"
-            echo "- **Actual Version**: \`$TF_VERSION\`"
-            echo "- **Actual Version**: \`$TF_VERSION\`"
+            echo "- **Manual WorkflowTrigger Version**: \`${{ inputs.terraform_version }}\`"
+            echo "- **Extracted from versions.tf**: \`${{ steps.tf-version.outputs.terraform-version }}\`"
+            echo "- **Version Used**: \`$TF_VERSION\`"
             echo ""
             echo "### Version Details"
             echo '```'

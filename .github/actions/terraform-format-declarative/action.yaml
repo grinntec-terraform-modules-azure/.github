@@ -117,10 +117,23 @@ runs:
 
     - name: Commit formatting changes
       if: steps.fmt-changes.outputs.has-changes == 'true'
-      uses: stefanzweifel/git-auto-commit-action@v5
-      with:
-        commit_message: ${{ inputs.commit_message }}
-        file_pattern: "*.tf *.tfvars"
-        commit_options: '--no-verify'
-        commit_user_name: ${{ inputs.author_name }}
-        commit_user_email: ${{ inputs.author_email }}
+      shell: bash
+      working-directory: ${{ inputs.working_directory }}
+      run: |
+        # Configure git
+        git config user.name "${{ inputs.author_name }}"
+        git config user.email "${{ inputs.author_email }}"
+        
+        # Add only the files that were changed by terraform fmt
+        echo "${{ steps.fmt-changes.outputs.files-changed }}" | while read -r file; do
+          if [ -n "$file" ] && [ -f "$file" ]; then
+            echo "Adding $file to commit"
+            git add "$file"
+          fi
+        done
+        
+        # Commit and push the changes
+        git commit -m "${{ inputs.commit_message }}" --no-verify
+        git push
+        
+        echo "::notice::Committed and pushed formatting changes successfully"

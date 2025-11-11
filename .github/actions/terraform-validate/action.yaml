@@ -8,7 +8,7 @@ runs:
       shell: bash
       run: |
         echo "::group::Terraform Init"
-        terraform init -backend=false
+        terraform init -backend=false -upgrade
         echo "::endgroup::"
 
     - name: Terraform Validate
